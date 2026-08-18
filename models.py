@@ -7,6 +7,7 @@ from db import metadata
 users = Table(
     'users', metadata,
     Column('id', Uuid, primary_key=True, default=uuid.uuid4),
+    Column('username', String(100), nullable=False, default='User'),
     Column('email', String(120), unique=True, nullable=False),
     Column('password_hash', String(255), nullable=False),
     Column('role', String(20), nullable=False)

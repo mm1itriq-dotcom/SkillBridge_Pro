@@ -75,7 +75,11 @@ export default function Dashboard() {
                 <p className="course-desc">{course.description}</p>
               </div>
               <div className="course-card-footer">
-                <button className="enroll-btn" style={{ backgroundColor: 'var(--primary-color)', color: 'white', borderColor: 'var(--primary-color)' }}>
+                <button 
+                  className="enroll-btn" 
+                  style={{ backgroundColor: 'var(--primary-color)', color: 'white', borderColor: 'var(--primary-color)' }}
+                  onClick={() => navigate(`/course/${course.course_id}/view`)}
+                >
                   Resume Learning
                 </button>
               </div>

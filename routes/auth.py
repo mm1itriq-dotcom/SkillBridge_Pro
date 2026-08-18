@@ -17,10 +17,17 @@ PASSWORD_REGEX = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$")
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.json
+    username = data.get('username')
     email = data.get('email')
     password = data.get('password')
     role = data.get('role', 'student')
     
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
+        
+    if not username[0].isalpha():
+        return jsonify({"error": "Username must start with a letter"}), 400
+
     # Validation using Regex
     if not email or not EMAIL_REGEX.match(email):
         return jsonify({"error": "Invalid email format"}), 400
@@ -32,12 +39,53 @@ def register():
     
     try:
         with engine.connect() as conn:
-            stmt = insert(users).values(email=email, password_hash=hashed_password, role=role)
+            stmt = insert(users).values(username=username, email=email, password_hash=hashed_password, role=role)
             conn.execute(stmt)
             conn.commit()
         return jsonify({"message": "User registered successfully!"}), 201
     except Exception as e:
-        return jsonify({"error": "Email already exists or database error."}), 400
+        return jsonify({"error": "Email already exists ."}), 400
+
+from utils.decorators import login_required
+
+@auth_bp.route('/update_profile', methods=['PUT'])
+@login_required
+def update_profile():
+    data = request.json
+    username = data.get('username')
+    new_password = data.get('new_password')
+    old_password = data.get('old_password')
+    
+    if username and not username[0].isalpha():
+        return jsonify({"error": "Username must start with a letter"}), 400
+        
+    update_data = {}
+    if username:
+        update_data['username'] = username
+        
+    if new_password:
+        if not old_password:
+            return jsonify({"error": "You must provide your current password to set a new password."}), 400
+            
+        with engine.connect() as conn:
+            user_record = conn.execute(select(users.c.password_hash).where(users.c.id == request.user_id)).fetchone()
+            if not user_record or not check_password_hash(user_record.password_hash, old_password):
+                return jsonify({"error": "Incorrect current password."}), 400
+
+        if not PASSWORD_REGEX.match(new_password):
+            return jsonify({"error": "Password must be at least 8 characters long and contain both letters and numbers."}), 400
+        update_data['password_hash'] = generate_password_hash(new_password)
+        
+    if not update_data:
+        return jsonify({"message": "Nothing to update"}), 200
+        
+    from sqlalchemy import update
+    with engine.connect() as conn:
+        stmt = update(users).where(users.c.id == request.user_id).values(**update_data)
+        conn.execute(stmt)
+        conn.commit()
+        
+    return jsonify({"message": "Profile updated successfully! If you changed your details, please log in again for changes to take effect."}), 200
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -57,9 +105,10 @@ def login():
                 'user_id': str(result.id), # UUIDs must be cast to string for JSON serialization
                 'role': result.role,
                 'email': result.email,
+                'username': result.username,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24) # Expires in 24 hours
             }, current_app.secret_key, algorithm="HS256")
             
             return jsonify({"message": "Login successful", "token": token}), 200
         else:
-            return jsonify({"error": "Invalid credentials"}), 401
+            return jsonify({"error": "Invalid email or password. Please try again."}), 401

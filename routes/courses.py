@@ -40,10 +40,12 @@ def get_catalog():
             total_gaps = 0
             total_required_levels = 0
             missing_skills = []
+            all_requirements = []
             
             for req in requirements:
                 required_level = req.min_level
                 total_required_levels += required_level
+                all_requirements.append(req.name)
                 
                 current_level = student_levels.get(str(req.skill_id), 0)
                 
@@ -67,6 +69,7 @@ def get_catalog():
                 "description": course.description,
                 "match_percentage": f"{match_percentage}%",
                 "missing_skills": missing_skills,
+                "all_requirements": all_requirements,
                 "is_enrolled": str(course.id) in enrolled_set
             })
             

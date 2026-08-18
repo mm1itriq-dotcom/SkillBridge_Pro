@@ -1,0 +1,64 @@
+[
+  {
+    "title": "Machine Learning Foundations",
+    "description": "Learn the basics of ML, supervised vs unsupervised learning, and build your first models.",
+    "requirements": [
+      {"skill_name": "Python Programming", "category": "Programming", "min_level": 2},
+      {"skill_name": "Linear Algebra", "category": "Math", "min_level": 2}
+    ]
+  },
+  {
+    "title": "Advanced PostgreSQL Administration",
+    "description": "Deep dive into Postgres internals, performance tuning, replication, and backup strategies.",
+    "requirements": [
+      {"skill_name": "Database Design (SQL)", "category": "Data", "min_level": 4}
+    ]
+  },
+  {
+    "title": "React Native for Mobile Apps",
+    "description": "Take your React skills to mobile. Build cross-platform apps for iOS and Android.",
+    "requirements": [
+      {"skill_name": "React Frontend", "category": "Web Dev", "min_level": 3}
+    ]
+  },
+  {
+    "title": "Deep Learning with PyTorch",
+    "description": "Build neural networks from scratch. CNNs, RNNs, and Transformers.",
+    "requirements": [
+      {"skill_name": "Python Programming", "category": "Programming", "min_level": 4},
+      {"skill_name": "Linear Algebra", "category": "Math", "min_level": 3}
+    ]
+  },
+  {
+    "title": "Full Stack Next.js & Prisma",
+    "description": "Build SEO-friendly, server-rendered React applications with a robust ORM.",
+    "requirements": [
+      {"skill_name": "React Frontend", "category": "Web Dev", "min_level": 3},
+      {"skill_name": "Database Design (SQL)", "category": "Data", "min_level": 2}
+    ]
+  },
+  {
+    "title": "Data Engineering with Apache Spark",
+    "description": "Process massive datasets in distributed clusters. Learn ETL pipelines.",
+    "requirements": [
+      {"skill_name": "Python Programming", "category": "Programming", "min_level": 3},
+      {"skill_name": "Database Design (SQL)", "category": "Data", "min_level": 3}
+    ]
+  },
+  {
+    "title": "Cybersecurity and Ethical Hacking",
+    "description": "Learn penetration testing, network vulnerabilities, and how to secure cloud environments.",
+    "requirements": [
+      {"skill_name": "Networking", "category": "IT", "min_level": 3},
+      {"skill_name": "Python Programming", "category": "Programming", "min_level": 2}
+    ]
+  },
+  {
+    "title": "Advanced UI/UX Design Systems",
+    "description": "Build scalable design systems in Figma and implement them in React with perfect precision.",
+    "requirements": [
+      {"skill_name": "Figma", "category": "Design", "min_level": 3},
+      {"skill_name": "React Frontend", "category": "Web Dev", "min_level": 2}
+    ]
+  }
+]

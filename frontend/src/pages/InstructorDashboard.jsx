@@ -76,7 +76,7 @@ export default function InstructorDashboard() {
         </div>
         <button 
           className="submit-btn" 
-          style={{ width: 'auto', padding: '12px 24px' }}
+          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
           onClick={() => navigate('/instructor/create')}
         >
           + Create New Course
@@ -85,9 +85,9 @@ export default function InstructorDashboard() {
 
       <div className="courses-grid">
         {courses.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', backgroundColor: 'var(--course-bg)', borderRadius: '16px', border: '1px dashed var(--border-color)' }}>
-            <h3 style={{ marginBottom: '12px', color: 'var(--text-main)' }}>No courses published</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>You haven't created any courses yet.</p>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3.75rem 1.25rem', backgroundColor: 'var(--course-bg)', borderRadius: '1rem', border: '0.062rem dashed var(--border-color)' }}>
+            <h3 style={{ marginBottom: '0.75rem', color: 'var(--text-main)' }}>No courses published</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>You haven't created any courses yet.</p>
           </div>
         ) : (
           courses.map(course => (
@@ -99,17 +99,17 @@ export default function InstructorDashboard() {
                   Published: {new Date(course.created_at).toLocaleDateString()}
                 </div>
               </div>
-              <div className="course-card-footer" style={{ display: 'flex', gap: '8px' }}>
+              <div className="course-card-footer" style={{ display: 'flex', gap: '0.5rem' }}>
                 <button 
                   className="enroll-btn" 
-                  style={{ flex: 1, backgroundColor: 'var(--badge-bg)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}
+                  style={{ flex: 1, backgroundColor: 'var(--badge-bg)', color: 'var(--text-main)', border: '0.062rem solid var(--border-color)' }}
                   onClick={() => navigate(`/instructor/edit/${course.course_id}`)}
                 >
                   Manage Course
                 </button>
                 <button 
                   title="Delete Course"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fee2e2', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: '8px', padding: '0 12px', cursor: 'pointer' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fee2e2', color: '#ef4444', border: '0.062rem solid #fca5a5', borderRadius: '0.5rem', padding: '0 0.75rem', cursor: 'pointer' }}
                   onClick={() => setCourseToDelete(course)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
@@ -123,25 +123,25 @@ export default function InstructorDashboard() {
       {/* Delete Confirmation Modal */}
       {courseToDelete && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'var(--course-bg)', padding: '32px', borderRadius: '16px', border: '1px solid var(--border-color)', width: '400px', maxWidth: '90%', boxShadow: 'var(--shadow-xl)' }}>
-            <h3 style={{ fontSize: '1.25rem', marginTop: 0, marginBottom: '16px', color: 'var(--text-main)' }}>Delete Course?</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+          <div style={{ backgroundColor: 'var(--course-bg)', padding: '2rem', borderRadius: '1rem', border: '0.062rem solid var(--border-color)', width: '25rem', maxWidth: '90%', boxShadow: 'var(--shadow-xl)' }}>
+            <h3 style={{ fontSize: '1.25rem', marginTop: 0, marginBottom: '1rem', color: 'var(--text-main)' }}>Delete Course?</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
               Are you sure you want to permanently delete <strong>{courseToDelete.title}</strong>? All associated enrollments and skill requirements will be destroyed. This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               <button 
                 onClick={() => setCourseToDelete(null)}
                 disabled={isDeleting}
-                style={{ padding: '10px 20px', backgroundColor: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-main)', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' }}
+                style={{ padding: '0.625rem 1.25rem', backgroundColor: 'transparent', border: '0.062rem solid var(--border-color)', color: 'var(--text-main)', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '500' }}
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmDeleteCourse}
                 disabled={isDeleting}
-                style={{ padding: '10px 20px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{ padding: '0.625rem 1.25rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
               >
-                {isDeleting && <div className="spinner" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>}
+                {isDeleting && <div className="spinner" style={{ width: '0.875rem', height: '0.875rem', border: '0.125rem solid rgba(255,255,255,0.3)', borderTop: '0.125rem solid white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>}
                 Delete Permanently
               </button>
             </div>

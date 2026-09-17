@@ -76,7 +76,7 @@ export default function Register() {
           )}
 
           {success && (
-            <div style={{ backgroundColor: '#f0fdf4', color: '#15803d', padding: '14px', borderRadius: '8px', marginBottom: '24px', border: '1px solid #bbf7d0', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: '500' }}>
+            <div style={{ backgroundColor: '#f0fdf4', color: '#15803d', padding: '0.875rem', borderRadius: '0.5rem', marginBottom: '1.5rem', border: '0.062rem solid #bbf7d0', display: 'flex', gap: '0.5rem', alignItems: 'center', fontWeight: '500' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
               Registration successful! Redirecting to login...
             </div>
@@ -94,7 +94,7 @@ export default function Register() {
               </select>
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
               <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
                 <label>Full Name</label>
                 <input 
@@ -118,7 +118,7 @@ export default function Register() {
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
               <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
                 <label>Password</label>
                 <div className="password-wrapper">
@@ -173,7 +173,7 @@ export default function Register() {
             </button>
           </form>
 
-          <p style={{ marginTop: '32px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          <p style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
             Already have an account? <Link to="/login" style={{ color: 'var(--sidebar-active-bg)', fontWeight: '600' }}>Sign in</Link>
           </p>
 

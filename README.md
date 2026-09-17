@@ -1,64 +1,99 @@
-# SkillBridge Pro
+<div align="center">
+  <h1>🌉 SkillBridge Pro</h1>
+  <p><b>An AI-Inspired, Algorithmic Course Matching & Educational Platform</b></p>
+</div>
 
-SkillBridge Pro is a modern, full-stack educational platform that revolutionizes how students discover courses. Instead of scrolling through endless catalogs, SkillBridge Pro analyzes a student's current skill profile and algorithmically matches them with courses that perfectly bridge their knowledge gaps.
+---
 
-## ✨ Key Features
+## 📖 About The Project
 
-- **Algorithmic Course Matching**: Calculates a dynamic "Match Score" based on a student's current proficiency levels versus a course's minimum skill requirements.
-- **Role-Based Workflows**: Dedicated dashboards and permissions for **Instructors** (course creators) and **Students** (learners).
-- **Instructor Dashboard**: Instructors can author, edit, and safely delete courses. The system uses cascading database constraints to ensure no orphaned data is left behind.
-- **Dynamic Skill Profiles**: Students can map out their current skills and proficiencies, directly influencing which courses are recommended to them.
-- **Real-Time Filtering**: Instant client-side search and dynamic dropdown filtering based on course requirements.
-- **Sleek, Modern UI**: A beautiful dark-navy theme featuring custom-built, animated frosted-glass modals and inline validation badges—completely free of native browser alerts.
+SkillBridge Pro is a modern, full-stack educational platform designed to revolutionize how students discover learning paths. Instead of endlessly scrolling through course catalogs, SkillBridge Pro analyzes a student's current skill profile and algorithmically matches them with courses that perfectly bridge their knowledge gaps using a dynamic **Match Score** system.
 
-## 🛠️ Tech Stack
+### ✨ Key Features
 
-- **Frontend**: React 18, Vite, React Router, raw CSS (Custom Dark Theme & Animations)
-- **Backend**: Python, Flask, SQLAlchemy, JWT Authentication
-- **Database**: PostgreSQL (using UUIDs and cascading relational constraints)
+*   🧠 **Algorithmic Course Matching:** Dynamically calculates a "Match Score" by comparing a student's current proficiency levels against a course's minimum skill requirements.
+*   👥 **Role-Based Workflows:** Secure, dedicated dashboards and tailored permissions for **Instructors** (course creators) and **Students** (learners).
+*   ⚙️ **Instructor Dashboard:** Allows educators to author, manage, and safely delete courses. Utilizes strict cascading database constraints (`ON DELETE CASCADE`) to ensure zero orphaned data.
+*   📊 **Dynamic Skill Profiles:** Students can visually map out their current skills, which directly influences the recommendation engine.
+*   ⚡ **Real-Time Filtering:** Instant client-side search and dynamic dropdown filtering without page reloads.
+*   🎨 **Sleek, Modern UI:** A beautiful dark-navy aesthetic featuring animated frosted-glass modals and inline validation badges—providing a seamless UX completely free of native browser alerts.
 
-## 🚀 Getting Started
+---
+
+## 🏗️ Architecture & Tech Stack
+
+This project enforces a strict separation of concerns, utilizing a modern, decoupled micro-architecture:
+
+### Backend (REST API)
+*   **Language:** Python 3.10+
+*   **Framework:** Flask
+*   **Database Engine:** PostgreSQL
+*   **ORM / Query Builder:** SQLAlchemy 2.0 (Core)
+*   **Authentication:** JWT (JSON Web Tokens) & Bcrypt for secure password hashing
+*   **Security:** `python-dotenv` for secure environment variable management
+
+### Frontend (Client Interface)
+*   **Framework:** React 18
+*   **Build Tool:** Vite (for Lightning-Fast HMR)
+*   **Routing:** React Router v6
+*   **Styling:** Raw CSS (Custom Dark Theme & Frosted-Glass Animations)
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+Follow these steps to run the platform locally on your machine.
 
 ### Prerequisites
-- Node.js & npm
-- Python 3.10+
-- PostgreSQL (Ensure you have a database created and accessible)
+*   [Node.js](https://nodejs.org/) (v16+) & npm
+*   [Python](https://www.python.org/) (3.10+)
+*   [PostgreSQL](https://www.postgresql.org/) (Ensure a database named `skillbridge` is created locally)
 
-### 1. Backend Setup (Flask)
-Navigate to the root directory and set up your virtual environment:
+### 1. Backend Setup (Flask API)
+
+Open a terminal in the root directory of the project:
 
 ```bash
-# Create and activate a virtual environment
-python -m venv venv
-.\venv\Scripts\activate  # Windows
+# 1. Activate the virtual environment (Windows)
+.\venv\Scripts\activate
 
-# Install dependencies
-pip install flask flask-cors psycopg2 sqlalchemy pyjwt bcrypt
+# 2. Install dependencies (including dotenv for security)
+pip install flask flask-cors psycopg2 sqlalchemy pyjwt bcrypt python-dotenv
 
-# Configure the Database
-# Open `db.py` and ensure the database connection string matches your local PostgreSQL setup.
+# 3. Configure the Database
+# Ensure your `.env` file exists in the root directory with the following variable:
+# DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost/skillbridge"
 
-# Run the Flask server
+# 4. Initialize and Seed the Database
+python init_db.py
+python seed_db.py  # (Optional: Creates an instructor account and dummy courses/skills)
+
+# 5. Run the Flask Server
 python app.py
 ```
-The server will start on `http://127.0.0.1:5000`.
+*(The backend REST API will start on `http://127.0.0.1:5000`)*
 
 ### 2. Frontend Setup (React/Vite)
-Open a new terminal window and navigate to the frontend directory:
+
+Open a **second** terminal window and navigate to the frontend folder:
 
 ```bash
 cd frontend
 
-# Install dependencies
+# 1. Install frontend dependencies
 npm install
 
-# Start the development server
+# 2. Start the Vite development server
 npm run dev
 ```
-The application will be accessible at `http://localhost:5173`.
+*(The React application will automatically bind to `http://localhost:5173`)*
+
+---
 
 ## 🔐 Security & Database Integrity
-SkillBridge Pro enforces strict data integrity rules. Using PostgreSQL's `ON DELETE CASCADE`, if an instructor deletes a course or a student deletes their account, all associated relationships (enrollments, skill requirements, etc.) are safely destroyed to maintain a clean database schema.
 
-## 🎨 Design Philosophy
-The user experience heavily prioritizes non-intrusive, aesthetically pleasing feedback. Window `alert()` and `confirm()` dialogs are strictly avoided in favor of highly-responsive, animated React components and sleek frosted-glass modals.
+SkillBridge Pro enforces strict data integrity rules. Using PostgreSQL's robust relational schema, if an instructor deletes a course or a student deletes their account, all associated relationships (enrollments, skill requirements, match scores) are safely and instantly destroyed to maintain a clean, performant database schema.
+
+---
+
+*Designed and Developed by Mohammed Yousef Itriq.*

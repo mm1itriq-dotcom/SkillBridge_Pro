@@ -56,12 +56,12 @@ export default function Dashboard() {
 
       <div className="courses-grid">
         {enrolledCourses.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', backgroundColor: 'var(--sidebar-bg)', borderRadius: '16px', border: '1px dashed var(--border-color)' }}>
-            <h3 style={{ marginBottom: '12px', color: 'var(--text-main)' }}>No active enrollments</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>You haven't enrolled in any courses yet.</p>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3.75rem 1.25rem', backgroundColor: 'var(--sidebar-bg)', borderRadius: '1rem', border: '0.062rem dashed var(--border-color)' }}>
+            <h3 style={{ marginBottom: '0.75rem', color: 'var(--text-main)' }}>No active enrollments</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>You haven't enrolled in any courses yet.</p>
             <button 
               className="submit-btn" 
-              style={{ width: 'auto', padding: '12px 24px' }}
+              style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
               onClick={() => navigate('/catalog')}
             >
               Browse Catalog

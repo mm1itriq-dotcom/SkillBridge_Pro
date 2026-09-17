@@ -96,7 +96,7 @@ export default function Login() {
             </button>
           </form>
 
-          <p style={{ marginTop: '32px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          <p style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
             Don't have an account? <Link to="/register" style={{ color: 'var(--sidebar-active-bg)', fontWeight: '600' }}>Sign up</Link>
           </p>
         </div>

@@ -86,7 +86,7 @@ export default function EditCourse() {
         <p>Update your course details.</p>
       </div>
 
-      <div style={{ maxWidth: '600px', backgroundColor: 'var(--course-bg)', padding: '32px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+      <div style={{ maxWidth: '37.5rem', backgroundColor: 'var(--course-bg)', padding: '2rem', borderRadius: '1rem', border: '0.062rem solid var(--border-color)' }}>
         {error && <div className="error-msg">{error}</div>}
         
         <form onSubmit={handleUpdate}>
@@ -108,12 +108,12 @@ export default function EditCourse() {
               onChange={(e) => setDescription(e.target.value)} 
               required 
               rows="5"
-              style={{ width: '100%', padding: '14px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }}
+              style={{ width: '100%', padding: '0.875rem 1rem', borderRadius: '0.5rem', border: '0.062rem solid var(--border-color)', backgroundColor: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }}
               placeholder="What will students learn?"
             ></textarea>
           </div>
           
-          <div style={{ display: 'flex', gap: '16px', marginTop: '32px' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="enroll-btn" style={{ flex: 1, backgroundColor: 'transparent', color: 'var(--text-main)' }} onClick={() => navigate('/instructor')}>
               Cancel
             </button>
@@ -126,17 +126,17 @@ export default function EditCourse() {
 
       {/* Success Modal */}
       {successMsg && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
-          <div style={{ backgroundColor: 'var(--course-bg)', padding: '40px', borderRadius: '24px', border: '1px solid var(--border-color)', width: '400px', maxWidth: '90%', boxShadow: 'var(--shadow-xl)', textAlign: 'center', animation: 'fadeIn 0.3s ease-out' }}>
-            <div style={{ width: '64px', height: '64px', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(0.25rem)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
+          <div style={{ backgroundColor: 'var(--course-bg)', padding: '2.5rem', borderRadius: '1.5rem', border: '0.062rem solid var(--border-color)', width: '25rem', maxWidth: '90%', boxShadow: 'var(--shadow-xl)', textAlign: 'center', animation: 'fadeIn 0.3s ease-out' }}>
+            <div style={{ width: '4rem', height: '4rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             </div>
-            <h3 style={{ fontSize: '1.5rem', marginTop: 0, marginBottom: '16px', color: 'var(--text-main)' }}>Success!</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6', fontSize: '1.05rem' }}>
+            <h3 style={{ fontSize: '1.5rem', marginTop: 0, marginBottom: '1rem', color: 'var(--text-main)' }}>Success!</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.6', fontSize: '1.05rem' }}>
               {successMsg}
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--sidebar-active-bg)', fontSize: '0.9rem', fontWeight: '500' }}>
-              <div className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(56, 189, 248, 0.3)', borderTop: '2px solid var(--sidebar-active-bg)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--sidebar-active-bg)', fontSize: '0.9rem', fontWeight: '500' }}>
+              <div className="spinner" style={{ width: '1rem', height: '1rem', border: '0.125rem solid rgba(56, 189, 248, 0.3)', borderTop: '0.125rem solid var(--sidebar-active-bg)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
               Redirecting to Dashboard...
             </div>
           </div>

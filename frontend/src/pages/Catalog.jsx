@@ -92,7 +92,7 @@ export default function Catalog() {
 
   return (
     <div className="catalog-container">
-      <div className="catalog-header" style={{ marginBottom: '24px' }}>
+      <div className="catalog-header" style={{ marginBottom: '1.5rem' }}>
         <h1>Course Catalog</h1>
         <p>
           {role === 'instructor' 
@@ -101,21 +101,21 @@ export default function Catalog() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <div style={{ flex: '2', minWidth: '250px' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: '2', minWidth: '15.625rem' }}>
           <input 
             type="text" 
             placeholder="Search for courses..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--course-bg)', color: 'var(--text-main)', fontSize: '1rem' }}
+            style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '0.062rem solid var(--border-color)', backgroundColor: 'var(--course-bg)', color: 'var(--text-main)', fontSize: '1rem' }}
           />
         </div>
-        <div style={{ flex: '1', minWidth: '200px' }}>
+        <div style={{ flex: '1', minWidth: '12.5rem' }}>
           <select 
             value={selectedFilter}
             onChange={(e) => setSelectedFilter(e.target.value)}
-            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--course-bg)', color: 'var(--text-main)', fontSize: '1rem' }}
+            style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '0.062rem solid var(--border-color)', backgroundColor: 'var(--course-bg)', color: 'var(--text-main)', fontSize: '1rem' }}
           >
             <option value="">All Skills</option>
             {uniqueSkills.map(skill => (
@@ -127,8 +127,8 @@ export default function Catalog() {
 
       <div className="courses-grid">
         {filteredCourses.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', backgroundColor: 'var(--course-bg)', borderRadius: '16px', border: '1px dashed var(--border-color)' }}>
-             <h3 style={{ marginBottom: '12px', color: 'var(--text-main)' }}>No courses found</h3>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3.75rem 1.25rem', backgroundColor: 'var(--course-bg)', borderRadius: '1rem', border: '0.062rem dashed var(--border-color)' }}>
+             <h3 style={{ marginBottom: '0.75rem', color: 'var(--text-main)' }}>No courses found</h3>
              <p style={{ color: 'var(--text-muted)' }}>Try adjusting your search query or skill filter.</p>
           </div>
         ) : (

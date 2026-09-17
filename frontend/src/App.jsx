@@ -92,7 +92,7 @@ function App() {
         {isAuthPage && (
           <button 
             className="theme-toggle" 
-            style={{ position: 'absolute', top: '24px', right: '32px', zIndex: 10 }}
+            style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10 }}
             onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             aria-label="Toggle Theme"
           >

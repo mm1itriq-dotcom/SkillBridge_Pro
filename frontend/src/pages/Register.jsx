@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
@@ -11,7 +11,51 @@ export default function Register() {
   const [role, setRole] = useState('student');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  
+  // New States for Skills
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [addedSkills, setAddedSkills] = useState([]); // [{ skill_id, skill_name, level }]
+  const [currentSkillId, setCurrentSkillId] = useState('');
+  const [customSkillName, setCustomSkillName] = useState('');
+  const [currentLevel, setCurrentLevel] = useState('3');
+
   const navigate = useNavigate();
+
+  // Fetch skills on component mount
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/auth/skills')
+      .then(res => res.json())
+      .then(data => setAvailableSkills(data))
+      .catch(err => console.error("Error fetching skills:", err));
+  }, []);
+
+  const handleAddSkill = () => {
+    if (!currentSkillId) return;
+    if (currentSkillId === 'other' && !customSkillName.trim()) return;
+
+    const skillName = currentSkillId === 'other' 
+      ? customSkillName.trim() 
+      : availableSkills.find(s => s.skill_id === currentSkillId)?.name;
+
+    // Check if already added
+    if (addedSkills.some(s => s.skill_id === currentSkillId && currentSkillId !== 'other')) return;
+    if (currentSkillId === 'other' && addedSkills.some(s => s.skill_name.toLowerCase() === customSkillName.trim().toLowerCase())) return;
+
+    setAddedSkills([...addedSkills, {
+      skill_id: currentSkillId,
+      skill_name: skillName,
+      level: parseInt(currentLevel)
+    }]);
+
+    // Reset
+    setCurrentSkillId('');
+    setCustomSkillName('');
+    setCurrentLevel('3');
+  };
+
+  const handleRemoveSkill = (index) => {
+    setAddedSkills(addedSkills.filter((_, i) => i !== index));
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault(); 
@@ -35,10 +79,10 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch('/auth/register', {
+      const response = await fetch('http://127.0.0.1:5000/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password, role })
+        body: JSON.stringify({ username, email, password, role, skills: addedSkills })
       });
 
       const data = await response.json();
@@ -48,7 +92,7 @@ export default function Register() {
         // Automatically redirect to login after 2 seconds
         setTimeout(() => navigate('/login'), 2000);
       } else {
-        setError(data.error || "Registration failed");
+        setError(data.detail || data.error || "Registration failed");
       }
     } catch (err) {
       setError("Failed to connect to the server.");
@@ -63,8 +107,8 @@ export default function Register() {
         <p>Join as a Student to master new skills, or as an Instructor to author precision-matched courses.</p>
       </div>
 
-      <div className="login-form-section">
-        <div className="login-container">
+      <div className="login-form-section" style={{ overflowY: 'auto' }}>
+        <div className="login-container" style={{ margin: 'auto' }}>
           <h2>Create an account</h2>
           <p className="subtitle">Enter your details to get started.</p>
           
@@ -167,6 +211,144 @@ export default function Register() {
                 </div>
               </div>
             </div>
+
+            {/* Skills Selection Section - ONLY FOR STUDENTS */}
+            {role === 'student' && (
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label>Add Your Current Skills (Optional)</label>
+                
+                {/* Modern Skill Adder Card (Compact) */}
+                <div style={{ 
+                  border: '1px solid var(--border-color)', 
+                  padding: '0.75rem 1rem', 
+                  borderRadius: '0.75rem', 
+                  marginTop: '0.25rem',
+                  boxSizing: 'border-box'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    
+                    {/* Skill Selection Row */}
+                    <div>
+                      <div style={{ position: 'relative' }}>
+                        <select 
+                          value={currentSkillId} 
+                          onChange={(e) => setCurrentSkillId(e.target.value)}
+                          style={{ width: '100%', cursor: 'pointer', boxSizing: 'border-box' }}
+                        >
+                          <option value="">Choose a skill...</option>
+                          {availableSkills.map(s => (
+                            <option key={s.skill_id} value={s.skill_id}>{s.name}</option>
+                          ))}
+                          <option value="other" style={{ fontWeight: 'bold' }}>+ Add Custom Skill...</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Custom Skill Input */}
+                    {currentSkillId === 'other' && (
+                      <div>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Graphic Design"
+                          value={customSkillName}
+                          onChange={(e) => setCustomSkillName(e.target.value)}
+                          style={{ width: '100%', boxSizing: 'border-box' }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Level and Add Button on ONE line */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                          <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500', margin: 0 }}>LEVEL: <span style={{ color: 'var(--sidebar-active-bg)', fontWeight: '600' }}>
+                            {currentLevel === '1' ? 'Beginner' : 
+                             currentLevel === '2' ? 'Novice' : 
+                             currentLevel === '3' ? 'Intermediate' : 
+                             currentLevel === '4' ? 'Advanced' : 'Expert'}
+                          </span></label>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          {[1, 2, 3, 4, 5].map(lvl => (
+                            <div 
+                              key={lvl}
+                              onClick={() => setCurrentLevel(lvl.toString())}
+                              style={{
+                                flex: 1,
+                                height: '8px',
+                                borderRadius: '4px',
+                                backgroundColor: parseInt(currentLevel) >= lvl ? 'var(--sidebar-active-bg)' : 'var(--border-color)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                boxShadow: parseInt(currentLevel) >= lvl ? '0 0 8px rgba(14, 165, 233, 0.4)' : 'none'
+                              }}
+                              title={`Level ${lvl}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Add Button */}
+                      <button 
+                        type="button" 
+                        onClick={handleAddSkill}
+                        disabled={!currentSkillId || (currentSkillId === 'other' && !customSkillName.trim())}
+                        style={{ 
+                          width: '90px', 
+                          padding: '0.6rem', 
+                          backgroundColor: (!currentSkillId || (currentSkillId === 'other' && !customSkillName.trim())) ? 'var(--border-color)' : 'var(--sidebar-active-bg)', 
+                          color: (!currentSkillId || (currentSkillId === 'other' && !customSkillName.trim())) ? 'var(--text-muted)' : '#fff', 
+                          border: 'none', 
+                          borderRadius: '0.5rem', 
+                          cursor: (!currentSkillId || (currentSkillId === 'other' && !customSkillName.trim())) ? 'not-allowed' : 'pointer',
+                          fontWeight: '600',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.3rem',
+                          marginTop: '0.5rem',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Added Skills Chips */}
+                {addedSkills.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.75rem' }}>
+                    {addedSkills.map((sk, index) => (
+                      <div key={index} style={{ 
+                        display: 'flex', alignItems: 'center', gap: '0.5rem', 
+                        backgroundColor: 'transparent', 
+                        border: '1px solid var(--sidebar-active-bg)',
+                        padding: '0.2rem 0.5rem', 
+                        borderRadius: '1.5rem', 
+                      }}>
+                        <span style={{ fontWeight: '500', fontSize: '0.8rem' }}>{sk.skill_name}</span>
+                        <div style={{ display: 'flex', gap: '2px' }}>
+                           {[1,2,3,4,5].map(l => (
+                             <div key={l} style={{ width: '4px', height: '10px', borderRadius: '2px', backgroundColor: l <= sk.level ? 'var(--sidebar-active-bg)' : 'var(--border-color)' }} />
+                           ))}
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={() => handleRemoveSkill(index)} 
+                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', marginLeft: '0.25rem' }}
+                          title="Remove skill"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             <button type="submit" className="submit-btn">
               Create Account

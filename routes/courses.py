@@ -1,35 +1,31 @@
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, Body, HTTPException, Depends
 from sqlalchemy import select, insert
 from sqlalchemy.exc import IntegrityError
 from db import engine
 from models import courses, course_skill_requirements, user_skills, skills, enrollments
-from utils.decorators import login_required
+from utils.dependencies import get_current_user
+import uuid
 
-courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
+courses_bp = APIRouter(prefix='/courses')
 
-@courses_bp.route('/catalog', methods=['GET'])
-@login_required
-def get_catalog():
+@courses_bp.get('/catalog')
+def get_catalog(user: dict = Depends(get_current_user)):
+    user_id = user['user_id']
     with engine.connect() as conn:
-        # 1. Get all courses
         all_courses = conn.execute(select(courses)).fetchall()
         
-        # 2. Get the logged-in student's current skills
         my_skills_stmt = select(user_skills.c.skill_id, user_skills.c.proficiency_level)\
-            .where(user_skills.c.user_id == request.user_id)
+            .where(user_skills.c.user_id == user_id)
         my_skills_results = conn.execute(my_skills_stmt).fetchall()
         
-        # Convert to a dictionary: { skill_id: level } for ultra-fast lookups
         student_levels = {str(row.skill_id): row.proficiency_level for row in my_skills_results}
         
-        # 3. Get student's enrolled courses
-        enrolled_stmt = select(enrollments.c.course_id).where(enrollments.c.user_id == request.user_id)
+        enrolled_stmt = select(enrollments.c.course_id).where(enrollments.c.user_id == user_id)
         enrolled_result = conn.execute(enrolled_stmt).fetchall()
         enrolled_set = {str(row.course_id) for row in enrolled_result}
         
         catalog_response = []
         
-        # 4. Algorithm: Evaluate every course against the student's profile
         for course in all_courses:
             req_stmt = select(course_skill_requirements.c.skill_id, course_skill_requirements.c.min_level, skills.c.name)\
                 .select_from(course_skill_requirements.join(skills, course_skill_requirements.c.skill_id == skills.c.id))\
@@ -73,27 +69,27 @@ def get_catalog():
                 "is_enrolled": str(course.id) in enrolled_set
             })
             
-    return jsonify({"catalog": catalog_response})
+    return {"catalog": catalog_response}
 
-@courses_bp.route('/<uuid:course_id>/enroll', methods=['POST'])
-@login_required
-def enroll_course(course_id):
+@courses_bp.post('/{course_id}/enroll', status_code=201)
+def enroll_course(course_id: uuid.UUID, user: dict = Depends(get_current_user)):
+    user_id = user['user_id']
     with engine.connect() as conn:
         try:
-            stmt = insert(enrollments).values(user_id=request.user_id, course_id=str(course_id))
+            stmt = insert(enrollments).values(user_id=user_id, course_id=str(course_id))
             conn.execute(stmt)
             conn.commit()
-            return jsonify({"message": "Successfully enrolled"}), 201
+            return {"message": "Successfully enrolled"}
         except IntegrityError:
-            return jsonify({"error": "Already enrolled or course doesn't exist"}), 400
+            raise HTTPException(status_code=400, detail="Already enrolled or course doesn't exist")
 
-@courses_bp.route('/enrolled', methods=['GET'])
-@login_required
-def get_enrolled_courses():
+@courses_bp.get('/enrolled')
+def get_enrolled_courses(user: dict = Depends(get_current_user)):
+    user_id = user['user_id']
     with engine.connect() as conn:
         stmt = select(courses.c.id, courses.c.title, courses.c.description)\
             .select_from(enrollments.join(courses, enrollments.c.course_id == courses.c.id))\
-            .where(enrollments.c.user_id == request.user_id)
+            .where(enrollments.c.user_id == user_id)
         result = conn.execute(stmt).fetchall()
         
         enrolled_list = []
@@ -104,4 +100,4 @@ def get_enrolled_courses():
                 "description": row.description
             })
             
-    return jsonify({"enrolled": enrolled_list}), 200
+    return {"enrolled": enrolled_list}

@@ -1,70 +1,59 @@
-from flask import Blueprint, request, jsonify
-from sqlalchemy import insert
+from fastapi import APIRouter, Body, HTTPException, Depends
+from sqlalchemy import insert, select, update, delete
 from db import engine
 from models import courses, course_skill_requirements
-from utils.decorators import login_required, instructor_required
+from utils.dependencies import get_current_user, instructor_required
+import uuid
 
-instructor_bp = Blueprint('instructor', __name__, url_prefix='/instructor')
+instructor_bp = APIRouter(prefix='/instructor')
 
-@instructor_bp.route('/create_course', methods=['POST'])
-@login_required
-@instructor_required # Double protection!
-def create_course():
-    data = request.json
+@instructor_bp.post('/create_course')
+def create_course(data: dict = Body(...), user: dict = Depends(instructor_required)):
     title = data.get('title')
     description = data.get('description')
     skill_id = data.get('skill_id')
     min_level = data.get('min_level')
     
     if not skill_id or not min_level:
-        return jsonify({"error": "You must specify at least one skill requirement for the course."}), 400
+        raise HTTPException(status_code=400, detail="You must specify at least one skill requirement for the course.")
     
     with engine.connect() as conn:
-        # Create the course
         stmt = insert(courses).values(
             title=title, 
             description=description, 
-            instructor_id=request.user_id
-        ).returning(courses.c.id) # Returns the newly generated UUID
+            instructor_id=user['user_id']
+        ).returning(courses.c.id)
         
         new_course_id = conn.execute(stmt).scalar()
         
-        # Insert the initial required skill
         req_stmt = insert(course_skill_requirements).values(
             course_id=new_course_id,
             skill_id=skill_id,
             min_level=int(min_level)
         )
         conn.execute(req_stmt)
-        
         conn.commit()
         
-    return jsonify({"message": "Course created!", "course_id": str(new_course_id)})
+    return {"message": "Course created!", "course_id": str(new_course_id)}
 
-@instructor_bp.route('/delete_course/<course_id>', methods=['DELETE'])
-@login_required
-@instructor_required
-def delete_course(course_id):
-    from sqlalchemy import delete, select
+@instructor_bp.delete('/delete_course/{course_id}')
+def delete_course(course_id: uuid.UUID, user: dict = Depends(instructor_required)):
+    course_id_str = str(course_id)
     with engine.connect() as conn:
-        # Verify the instructor owns this course
-        stmt = select(courses.c.instructor_id).where(courses.c.id == course_id)
+        stmt = select(courses.c.instructor_id).where(courses.c.id == course_id_str)
         result = conn.execute(stmt).fetchone()
         
-        if not result or str(result.instructor_id) != request.user_id:
-            return jsonify({"error": "Course not found or you don't have permission to delete it."}), 403
+        if not result or str(result.instructor_id) != user['user_id']:
+            raise HTTPException(status_code=403, detail="Course not found or you don't have permission to delete it.")
             
-        del_stmt = delete(courses).where(courses.c.id == course_id)
+        del_stmt = delete(courses).where(courses.c.id == course_id_str)
         conn.execute(del_stmt)
         conn.commit()
         
-    return jsonify({"message": "Course deleted successfully!"})
+    return {"message": "Course deleted successfully!"}
 
-@instructor_bp.route('/assign_requirement', methods=['POST'])
-@login_required
-@instructor_required
-def assign_requirement():
-    data = request.json
+@instructor_bp.post('/assign_requirement')
+def assign_requirement(data: dict = Body(...), user: dict = Depends(instructor_required)):
     course_id = data.get('course_id')
     skill_id = data.get('skill_id')
     min_level = data.get('min_level')
@@ -78,20 +67,17 @@ def assign_requirement():
         conn.execute(stmt)
         conn.commit()
         
-    return jsonify({"message": "Skill requirement added to course!"})
+    return {"message": "Skill requirement added to course!"}
 
-@instructor_bp.route('/edit_course/<course_id>', methods=['PUT'])
-@login_required
-@instructor_required
-def edit_course(course_id):
-    from sqlalchemy import update
-    data = request.json
+@instructor_bp.put('/edit_course/{course_id}')
+def edit_course(course_id: uuid.UUID, data: dict = Body(...), user: dict = Depends(instructor_required)):
+    course_id_str = str(course_id)
     title = data.get('title')
     description = data.get('description')
     
     with engine.connect() as conn:
         stmt = update(courses).where(
-            (courses.c.id == course_id) & (courses.c.instructor_id == request.user_id)
+            (courses.c.id == course_id_str) & (courses.c.instructor_id == user['user_id'])
         ).values(
             title=title,
             description=description
@@ -100,18 +86,15 @@ def edit_course(course_id):
         conn.commit()
         
         if result.rowcount == 0:
-            return jsonify({"error": "Course not found or unauthorized"}), 404
+            raise HTTPException(status_code=404, detail="Course not found or unauthorized")
             
-    return jsonify({"message": "Course updated successfully!"})
+    return {"message": "Course updated successfully!"}
 
-@instructor_bp.route('/my_courses', methods=['GET'])
-@login_required
-@instructor_required
-def my_courses():
-    from sqlalchemy import select
+@instructor_bp.get('/my_courses')
+def my_courses(user: dict = Depends(instructor_required)):
     with engine.connect() as conn:
         stmt = select(courses.c.id, courses.c.title, courses.c.description, courses.c.created_at)\
-            .where(courses.c.instructor_id == request.user_id)
+            .where(courses.c.instructor_id == user['user_id'])
         results = conn.execute(stmt).fetchall()
         
         my_courses_list = [{
@@ -121,4 +104,4 @@ def my_courses():
             "created_at": row.created_at.isoformat()
         } for row in results]
         
-    return jsonify({"courses": my_courses_list})
+    return {"courses": my_courses_list}

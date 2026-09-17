@@ -1,34 +1,37 @@
-from flask import Flask, jsonify
-from utils.decorators import login_required
-from utils.errors import setup_error_handlers # <--- Import it here
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from utils.errors import setup_error_handlers
 
-app = Flask(__name__)
-app.secret_key = 'super_secret_key_for_development' 
+app = FastAPI(title="SkillBridge Pro API", version="2.0")
 
-# Initialize the global error logger!
-setup_error_handlers(app) # <--- Call it here
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Import Blueprints
+setup_error_handlers(app)
+
 from routes.auth import auth_bp
 from routes.student import student_bp
 from routes.instructor import instructor_bp
 from routes.courses import courses_bp
 
-# Register Blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(student_bp)
-app.register_blueprint(instructor_bp)
-app.register_blueprint(courses_bp)
+app.include_router(auth_bp)
+app.include_router(student_bp)
+app.include_router(instructor_bp)
+app.include_router(courses_bp)
 
-@app.route('/')
+@app.get('/')
 def home():
-    return "SkillBridge Pro Backend API is running!"
+    return {"message": "SkillBridge Pro FastAPI Backend is running!"}
 
-# A test route to prove the logger works!
-@app.route('/test-crash')
+@app.get('/test-crash')
 def test_crash():
-    # This will trigger a ZeroDivisionError
     return 1 / 0 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    import uvicorn
+    uvicorn.run("app:app", host="127.0.0.1", port=5000, reload=True)
